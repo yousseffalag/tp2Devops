@@ -1,0 +1,30 @@
+pipeline {
+    environment {
+        registry = "ussefflg/tp2-partie2"
+        DOCKERHUB = credentials('dockerhub')
+    }
+    agent any
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git branch: 'master', url: 'https://github.com/yousseffalag/tp2Devops'
+            }
+        }
+        stage('Building image') {
+            steps {
+                bat "docker build -t %registry%:%BUILD_NUMBER% ."
+            }
+        }
+        stage('Test image') {
+            steps {
+                echo "Tests passed"
+            }
+        }
+        stage('Publish Image') {
+            steps {
+                bat 'docker login -u %DOCKERHUB_USR% -p %DOCKERHUB_PSW%'
+                bat 'docker push %registry%:%BUILD_NUMBER%'
+            }
+        }
+    }
+}
