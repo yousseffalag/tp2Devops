@@ -26,5 +26,11 @@ pipeline {
                 bat 'docker push %registry%:%BUILD_NUMBER%'
             }
         }
+        stage('Deploy image') {
+            steps {
+                bat 'docker rm -f tp4-container 2>nul || exit 0'
+                bat 'docker run -d --name tp4-container -p 8081:80 %registry%:%BUILD_NUMBER%'
+            }
+        }
     }
 }
